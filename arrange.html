@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Web Speech API Arrange HTML</title>
+     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+     <!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
+<script type="text/javascript">
+    var recognition = new webkitSpeechRecognition();
+    recognition.lang = "ja-JP";
+    recognition.interimResults = true;
+    recognition.continuous = true;
+    recognition.maxAlternatives = 10;
+
+    var storage=sessionStorage;
+//    var pre=5;
+
+    //初期化
+    onload = function() {
+//        clear();
+        storage.clear();
+        draw();
+    };
+
+    //クリア
+//    function clear() {
+//        strage.clear();
+//        pre=5;
+//        storage.setItem('val', pre);
+//    }
+
+    //円弧を描く
+    function draw() {
+        var canvas = document.getElementById('c2');
+        if ( ! canvas || ! canvas.getContext ) { return false; }
+        var ctx = canvas.getContext('2d');
+        var pre=5;
+        ctx.beginPath();
+
+        rnd = Math.floor( Math.random() * 4 );
+        $("#recognizedText").text(rnd);
+        if(rnd==0) {
+            //右
+            ctx.arc(150, 150, 120, 6, 6.5, true);
+            pre=0;
+        } if(rnd==1) {
+            //左
+            ctx.arc(150, 150, 120, 9.7, 9.1, false);
+            pre=1;
+        } if(rnd==2) {
+            //上
+            ctx.arc(150, 150, 120, 10.7, 11.3, true);
+            pre=2;
+        } if(rnd==3) {
+            //下
+            ctx.arc(150, 150, 120, 7.6, 8.1, true);
+            pre=3;
+        }
+        storage.removeItem('val');
+        storage.setItem('val',pre);
+        ctx.lineWidth = 50;
+        ctx.stroke();
+    }
+
+    //話し声の認識中
+    recognition.onsoundstart = function(){
+        $("#state").text("認識中");
+    };
+
+    //話し声の認識終了
+    recognition.onsoundend = function(){
+        $("#state").text("停止中");
+    };
+
+    //認識結果
+    recognition.onresult = function(event){
+        var results = event.results;
+        var now=9;
+        for (var i = event.resultIndex; i<results.length; i++){
+            //認識の最終結果
+            if(results[i].isFinal){
+                $("#recognizedText").text(results[i][0].transcript);
+                if(results[i][0].transcript=="右"){
+                    $("#recognizedText").text("右");
+                    now=0;
+                } else if(results[i][0].transcript=="左"){
+                    $("#recognizedText").text("左");
+                    now=1;
+                } else if(results[i][0].transcript=="上"){
+                    $("#recognizedText").text("上");
+                    now=2;
+                } else if(results[i][0].transcript=="下"){
+                    $("#recognizedText").text("下");
+                    now=3;
+                } else {
+//                    $("#recognizedText").text("もう一度試してください");
+                    now=4;
+                }
+            }
+        }
+
+        if(now==storage.getItem('val')){
+            $("#state").text("OK");
+//            storage.removeItem('val');
+//            storage.setItem('val',now);
+            draw();
+            
+        } else {
+            $("#state").text("NG");
+            
+        }
+    };
+
+</script>
+<style type="text/css">
+    p.ce {
+        margin:1em auto; padding:0;
+        text-align:center;
+    }
+</style>
+</head>
+<body>
+
+<form>
+<input type="button" value="開始" onclick="recognition.start();"/>
+<input type="button" value="終了" onclick="recognition.stop();"/>
+<div id="state">停止</div>
+<div id="recognizedText"></div>
+<p class="ce"><canvas id="c2" width="300" height="300"></canvas></p>
+</form>
+
+</body>
+</html>
+
