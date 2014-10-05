@@ -21,6 +21,16 @@
         storage.clear();
         okCnt=0;
         ngCnt=0;
+//        draw();
+    };
+
+    //確認開始
+    function ckStart() {
+        recognition.start();
+        $("#state").text("認識開始");
+        storage.clear();
+        okCnt=0;
+        ngCnt=0;
         draw();
     };
 
@@ -32,29 +42,24 @@
         ctx.beginPath();
 
         rnd = Math.floor( Math.random() * 4 );
+        ctx.clearRect(0, 0 ,canvas.width, canvas.height);
+        storage.removeItem('val');
+
         if(rnd==0) {
             //右
-            ctx.clearRect(0, 0 ,canvas.width, canvas.height);
             ctx.arc(150, 150, 120, 6, 6.5, true);
-            storage.removeItem('val');
             storage.setItem('val',"0");
         } if(rnd==1) {
             //左
-            ctx.clearRect(0, 0 ,canvas.width, canvas.height);
             ctx.arc(150, 150, 120, 9.7, 9.1, false);
-            storage.removeItem('val');
             storage.setItem('val',"1");
         } if(rnd==2) {
             //上
-            ctx.clearRect(0, 0 ,canvas.width, canvas.height);
             ctx.arc(150, 150, 120, 10.7, 11.3, true);
-            storage.removeItem('val');
             storage.setItem('val',"2");
         } if(rnd==3) {
             //下
-            ctx.clearRect(0, 0 ,canvas.width, canvas.height);
             ctx.arc(150, 150, 120, 7.6, 8.1, true);
-            storage.removeItem('val');
             storage.setItem('val',"3");
         }
         ctx.lineWidth = 50;
@@ -96,8 +101,6 @@
                 if(now==storage.getItem('val')){
                     $("#state").text("OK");
                     okCnt=okCnt+1;
-                    $("#recognizedText02").text(okCnt);
-                    $("#recognizedText03").text(ngCnt);
                     if(okCnt==5){
                         recognition.stop();
                         $("#recognizedText").text("正解"+okCnt+"回／不正解"+ngCnt+"回");
@@ -107,8 +110,6 @@
                 } else {
                     $("#state").text("NG");
                     ngCnt=ngCnt+1;
-                    $("#recognizedText02").text(okCnt);
-                    $("#recognizedText03").text(ngCnt);
                     if(ngCnt==3){
                         recognition.stop();
                         $("#recognizedText").text("正解"+okCnt+"回／不正解"+ngCnt+"回");
@@ -143,10 +144,10 @@
     <div>
         <h1><p class="ce">視力確認アプリ</p></h1>
         <h4><p class="ce">開始ボタンをクリックして「上」「下」「左」「右」何れか回答してください。</p></h3>
-        <p class="ce"><input type="button" value="開始" onclick="recognition.start();"/>
+        <p class="ce"><input type="button" value="開始" onclick="ckStart();"/>
 　　　　    <input type="button" value="終了" onclick="ckStop();"/></p>
     </div>
-    <div class="ce" id="state">停止</div>
+    <div class="ce" id="state">停止中</div>
     <div class="ce" id="recognizedText"></div>
     <div><p class="ce"><canvas id="c2" width="300" height="300"></canvas></p></div>
 </form>
