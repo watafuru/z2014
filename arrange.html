@@ -98,7 +98,7 @@
                     okCnt=okCnt+1;
                     $("#recognizedText02").text(okCnt);
                     $("#recognizedText03").text(ngCnt);
-                    if(okCnt==3){
+                    if(okCnt==5){
                         recognition.stop();
                         $("#recognizedText").text("正解"+okCnt+"回／不正解"+ngCnt+"回");
                     } else {
